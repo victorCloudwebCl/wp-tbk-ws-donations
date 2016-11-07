@@ -39,10 +39,9 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 				echo '<script>console.log ("cert-normal ok")</script>';
 			}
 			
-			//Verificar si existe el archivo de logs, si no, crear uno nuevo
+			//**Verificar si existe el archivo de logs, si no, crear uno nuevo
 					$logFile = ABS_DIR . '/log/logfile.txt';
-					
-					
+	
 					if (file_exists($logFile)) {
 						  $fh = fopen($logFile, 'a');
 						  echo '<script>console.log ("logfile existe.")</script>';
@@ -78,13 +77,13 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 			
 			$email = isset($_GET["email"])? filter_var($_GET["email"], FILTER_SANITIZE_EMAIL): 'anonimo@cnjoven.cl';
 			$amount = isset($_GET["amount"])? filter_var($_GET["amount"], FILTER_SANITIZE_NUMBER_INT): 5000;
-			
 
 			$bot_tx = "Continuar";
 			
 			/* Según acción, paso */
 			switch ($action) {
 
+				/*PASO DEFAULT: Confirmar datos de donación*/
 				default:
 				$tx_step = "Confirma los datos";
 				$bot_tx = "Ir al servidor seguro de Transbank";
@@ -104,10 +103,16 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 									<p>Orden de compra: <b>'.$request["buyOrder"].'</b>
 									<p> Email: <b>'.$email.'</b><p>
 									<p> Presiona el botón para realizar el pago, o ve hacia atrás con tu navegador para modificarlos.</p>';
-						
-
-						
-						
+					
+					// Escribir el log con la información de sesión creada por Tbk.
+					if (file_exists($logFile)) {
+						  $fh = fopen($logFile, 'w');
+						  echo '<script>console.log ("Datos OK.")</script>';
+						  fwrite ($fh,'sessionId='.$request["sessionId"].';buyOrder='.$request["buyOrder"].';amount='.$request["amount"].';email='.$email);
+						}
+					fclose($fh);	
+					
+					
 					$next_page = $result["url"];
 					
 					} else {
