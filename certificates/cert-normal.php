@@ -8,14 +8,13 @@
  * @version    1.0
  */
 
-/**
- * Contiene datos de integración para realizar pruebas de conectividad
- * */
+/** Contiene datos de integración para realizar pruebas de conectividad */
 return $certificate = array(
+
+    /** Ambiente */
+    "environment" => "INTEGRACION",
     
-    /**
-     * Llave Privada
-     * */
+    /** Llave Privada */
     "private_key" => "-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEA0ClVcH8RC1u+KpCPUnzYSIcmyXI87REsBkQzaA1QJe4w/B7g
 6KvKV9DaqfnNhMvd9/ypmGf0RDQPhlBbGlzymKz1xh0lQBD+9MZrg8Ju8/d1k0pI
@@ -43,10 +42,8 @@ uFzX4r0CgYEArx4TAq+Z4crVCdABBzAZ7GvvAXdxvBo0AhD9IddSWVTCza972wta
 5J2rrS/ye9Tfu5j2IbTHaLDz14mwMXr1S4L39UX/NifLc93KHie/yjycCuu4uqNo
 MtdweTnQt73lN2cnYedRUhw9UTfPzYu7jdXCUAyAD4IEjFQrswk2x04=
 -----END RSA PRIVATE KEY-----",
-    
-    /**
-     * Certificado Publico
-     * */
+
+    /** Certificado Publico */
     "public_cert" => "-----BEGIN CERTIFICATE-----
 MIIDujCCAqICCQCZ42cY33KRTzANBgkqhkiG9w0BAQsFADCBnjELMAkGA1UEBhMC
 Q0wxETAPBgNVBAgMCFNhbnRpYWdvMRIwEAYDVQQKDAlUcmFuc2JhbmsxETAPBgNV
@@ -69,32 +66,27 @@ n05jlj/EjYa5bLKs/yggYiqMkZdIX8NiLL6ZTERIvBa6azDKs6yDsCsnE1M5tzQI
 VVEkZtEfil6E1tz8v3yLZapLt+8jmPq1RCSx3Zh4fUkxBTpUW/9SWUNEXbKK7bB3
 zfB3kGE55K5nxHKfQlrqdHLcIo+vdShATwYnmhUkGxUnM9qoCDlB8lYu3rFi9w==
 -----END CERTIFICATE-----",
-    
-    /**
-     * Certificado Privado
-     * */
+
+    /** Certificado Server */
     "webpay_cert" => "-----BEGIN CERTIFICATE-----
-MIIDKTCCAhECBFZl7uIwDQYJKoZIhvcNAQEFBQAwWTELMAkGA1UEBhMCQ0wxDjAM
-BgNVBAgMBUNoaWxlMREwDwYDVQQHDAhTYW50aWFnbzEMMAoGA1UECgwDa2R1MQww
-CgYDVQQLDANrZHUxCzAJBgNVBAMMAjEwMB4XDTE1MTIwNzIwNDEwNloXDTE4MDkw
-MjIwNDEwNlowWTELMAkGA1UEBhMCQ0wxDjAMBgNVBAgMBUNoaWxlMREwDwYDVQQH
-DAhTYW50aWFnbzEMMAoGA1UECgwDa2R1MQwwCgYDVQQLDANrZHUxCzAJBgNVBAMM
-AjEwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAizJUWTDC7nfP3jmZ
-pWXFdG9oKyBrU0Bdl6fKif9a1GrwevThsU5Dq3wiRfYvomStNjFDYFXOs9pRIxqX
-2AWDybjAX/+bdDTVbM+xXllA9stJY8s7hxAvwwO7IEuOmYDpmLKP7J+4KkNH7yxs
-KZyLL9trG3iSjV6Y6SO5EEhUsdxoJFAow/h7qizJW0kOaWRcljf7kpqJAL3AadIu
-qV+hlf+Ts/64aMsfSJJA6xdbdp9ddgVFoqUl1M8vpmd4glxlSrYmEkbYwdI9uF2d
-6bAeaneBPJFZr6KQqlbbrVyeJZqmMlEPy0qPco1TIxrdEHlXgIFJLyyMRAyjX9i4
-l70xjwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQBn3tUPS6e2USgMrPKpsxU4OTfW
-64+mfD6QrVeBOh81f6aGHa67sMJn8FE/cG6jrUmX/FP1/Cpbpvkm5UUlFKpgaFfH
-v+KgCpEvgcRIv/OeIi6Jbuu3NrPdGPwzYkzlOQnmgio5RGb6GSs+OQ0mUWZ9J1+Y
-tdZc+xTga0x7nsCT5xNcUXsZKhyjoKhXtxJm3eyB3ysLNyuL/RHy/EyNEWiUhvt1
-SIePnW+Y4/cjQWYwNqSqMzTSW9TP2QR2bX/W2H6ktRcLsgBK9mq7lE36p3q6c9Dt
-ZJE+xfA4NGCYWM9hd8pbusnoNO7AFxJZOuuvLZI7JvD7YLhPvCYKry7N6x3l
+MIIDKTCCAhECBFZl7uIwDQYJKoZIhvcNAQEFBQAwWTELMAkGA1UEBhMCQ0wxDjAMBgNVBAgMBUNo
+aWxlMREwDwYDVQQHDAhTYW50aWFnbzEMMAoGA1UECgwDa2R1MQwwCgYDVQQLDANrZHUxCzAJBgNV
+BAMMAjEwMB4XDTE1MTIwNzIwNDEwNloXDTE4MDkwMjIwNDEwNlowWTELMAkGA1UEBhMCQ0wxDjAM
+BgNVBAgMBUNoaWxlMREwDwYDVQQHDAhTYW50aWFnbzEMMAoGA1UECgwDa2R1MQwwCgYDVQQLDANr
+ZHUxCzAJBgNVBAMMAjEwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAizJUWTDC7nfP
+3jmZpWXFdG9oKyBrU0Bdl6fKif9a1GrwevThsU5Dq3wiRfYvomStNjFDYFXOs9pRIxqX2AWDybjA
+X/+bdDTVbM+xXllA9stJY8s7hxAvwwO7IEuOmYDpmLKP7J+4KkNH7yxsKZyLL9trG3iSjV6Y6SO5
+EEhUsdxoJFAow/h7qizJW0kOaWRcljf7kpqJAL3AadIuqV+hlf+Ts/64aMsfSJJA6xdbdp9ddgVF
+oqUl1M8vpmd4glxlSrYmEkbYwdI9uF2d6bAeaneBPJFZr6KQqlbbrVyeJZqmMlEPy0qPco1TIxrd
+EHlXgIFJLyyMRAyjX9i4l70xjwIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQBn3tUPS6e2USgMrPKp
+sxU4OTfW64+mfD6QrVeBOh81f6aGHa67sMJn8FE/cG6jrUmX/FP1/Cpbpvkm5UUlFKpgaFfHv+Kg
+CpEvgcRIv/OeIi6Jbuu3NrPdGPwzYkzlOQnmgio5RGb6GSs+OQ0mUWZ9J1+YtdZc+xTga0x7nsCT
+5xNcUXsZKhyjoKhXtxJm3eyB3ysLNyuL/RHy/EyNEWiUhvt1SIePnW+Y4/cjQWYwNqSqMzTSW9TP
+2QR2bX/W2H6ktRcLsgBK9mq7lE36p3q6c9DtZJE+xfA4NGCYWM9hd8pbusnoNO7AFxJZOuuvLZI7
+JvD7YLhPvCYKry7N6x3l
 -----END CERTIFICATE-----",
-    
-    /**
-     * Codigo Comercio
-     * */
+
+    /** Codigo Comercio */
     "commerce_code" => "597020000541",
+
 );

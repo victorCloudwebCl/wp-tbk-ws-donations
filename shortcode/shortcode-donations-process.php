@@ -97,9 +97,11 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 					$request = array(
 							"amount"    => $amount,      // monto a cobrar
 							"buyOrder"  => round(microtime(true)*1000),    // numero orden de compra
-							//"buyOrder" => 99999,
 							"sessionId" => uniqid(), // idsession local
 						);
+						
+					//Generar orden de compra duplicada para certificación.
+					//$request["buyOrder"] = 99999; 
 						
 					
 
@@ -128,15 +130,41 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 						$next_page = $result["url"];
 						
 						
-					    if( exec('grep '.escapeshellarg($request["buyOrder"]).' '.$logFile)) {
-					       echo '<script>console.log("'.$request["buyOrder"].' DUPLICADO!")</script>';
-					       $message = "OC DUPLICADA";
-					       $resultadoLoginInfo =  $request['sessionId']."Sesión no iniciada en Transbank - OC Duplicada (# ".$request['buyOrder'].")";
-						} 							
+					   	//Comprobar que la OC no esté duplicada
+					   	//Si lo está, no redirigir a Transbank y mostrar pantalla de error.
+						    
+						    if( exec('grep '.escapeshellarg($request["buyOrder"]).' '.$logFile)) {
+						       echo '<script>console.log("'.$request["buyOrder"].' DUPLICADO!")</script>';
+						       $tx_step = "No se puede realizar.";
+						       $message = "No podemos realizar esta operación, debido a que la orden de compra se encuentra duplicada. Presiona el botón para generar una nueva orden de compra.";
+						       $bot_tx = "Reintentar";
+						       $next_page = '';
+						       //unset ($webpay_token); //Invalida el token de Transbank que esté vigente.
+							   $next_page_title = "Reintentar";
+						       
+						       
+								// Registrar el evento en el log.
+									if (file_exists($logFile)) {
+										  $fh = fopen($logFile, 'a');
+										  echo '<script>console.log ("TBK - Exito.")</script>';
+										  fwrite ($fh,"Sesión no iniciada (OC Duplicada)\n");
+										  fclose($fh);
+										}
+						    }			
+
+				
+						
 					
 					} else {
-							//NO HAY RESPUESTA DE TBK.
-							$message = "WebPay no disponible. Por favor inténtalo nuevamente o ponte en contacto con nosotros.";
+							// TBK no respondió con un token, o no respondió nada.
+							
+							$tx_step = "Ha ocurrido un error";
+							$message = "
+							<p>WebPay no se encuentra disponible. </p>
+							<p>Por favor inténtalo nuevamente o ponte en contacto con nosotros a través del formulario de contacto o los números de teléfono indicados.</p>
+							";
+							var_dump ($response);
+							
 					}
 					
 								// Escribir en el log el resultado de inicio sesión.
@@ -153,25 +181,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 				// action = result
 				case "result":
 					
-					//Chequeo de duplicidad de OC **************
-							echo '<script>console.log("'.$request["buyOrder"].'")</script>';
-						    
-						    if( exec('grep '.escapeshellarg($request["buyOrder"]).' '.$logFile)) {
-						       echo '<script>console.log("'.$request["buyOrder"].' DUPLICADO!")</script>';
-						       $tx_step = "No se puede realizar.";
-						       $message = "No podemos realizar esta operación, debido a que la orden de compra se encuentra duplicada. Presiona el botón para generar una nueva orden de compra.";
-						       $bot_tx = "Reintentar";
-						       
-						       
-								// Registrar el evento en el log.
-									if (file_exists($logFile)) {
-										  $fh = fopen($logFile, 'a');
-										  echo '<script>console.log ("TBK - Exito.")</script>';
-										  fwrite ($fh,"Sesión no iniciada (OC Duplicada)\n");
-										  fclose($fh);
-										}
-						    }			
-
+							
 					
 					
 					$tx_step = "Resultado de tu aporte.";
@@ -192,7 +202,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 								$message = '<p>Pago <b>aceptado y recibido</b> por Webpay. </p> 
 											<p> Si deseas ver el voucher, haz clic en el botón.</p>
 											<p> Número de orden: '.$result->buyOrder;
-								$next_page = $result->urlRedirection;
+								$next_page = '';
 								$next_page_title = "Finalizar Pago";
 								
 								$emailtxt = '
@@ -219,8 +229,6 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 								  fwrite ($fh,"exito\n");
 								  fclose($fh);
 							}
-							
-						
 							
 					} else {
 						$bot_tx = "Volver";
@@ -264,4 +272,3 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 		}				
 			
     }
-
