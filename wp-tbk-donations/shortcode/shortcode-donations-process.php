@@ -49,7 +49,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 						} else {
 						  $fh = fopen($logFile, 'w');
 						  echo '<script>console.log ("logfile creado.")</script>';
-						  fwrite ($fh,'***Logfile creado en:'.date(DATE_RFC2822);)
+						  fwrite ($fh,'***Logfile creado en:'.date(DATE_RFC2822));
 						}
 						fclose($fh);			
 
