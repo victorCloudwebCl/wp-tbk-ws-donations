@@ -33,7 +33,7 @@ if ( ! function_exists( 'tbk_donations_form' ) ) {
 		<style>
 		input {border:orange solid thin!important;}
 		</style>
-		<form action="http://www.cnjoven.cl/procesar-donacion/" method="GET">
+		<form action="'.$baseurl.'/procesar-donacion/" method="GET">
 		<p>Tu email:</p>
 		<input type="email" name="email"  value="'.$email.'"><br>
 		<p>Monto de tu donación: </p>
