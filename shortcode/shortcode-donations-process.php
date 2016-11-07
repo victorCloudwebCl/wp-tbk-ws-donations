@@ -39,16 +39,17 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 				echo '<script>console.log ("cert-normal ok")</script>';
 			}
 			
-			//**Verificar si existe el archivo de logs, si no, crear uno nuevo
+			//**Verificar si existe el archivo de logs, si no, crear uno nuevo***********************
 					$logFile = ABS_DIR . '/log/logfile.txt';
 	
 					if (file_exists($logFile)) {
 						  $fh = fopen($logFile, 'a');
 						  echo '<script>console.log ("logfile existe.")</script>';
 						} else {
-						  $fh = fopen($logFile, 'w');
+						  $fh = fopen($logFile, 'a');
 						  echo '<script>console.log ("logfile creado.")</script>';
-						  fwrite ($fh,'***Logfile creado en:'.date(DATE_RFC2822));
+						  fwrite ($fh,"***Logfile creado en:'.date(DATE_RFC2822).\n");
+						  fwrite ($fh,"sessionID;			buyOrder;			amount;		email\n");
 						}
 						fclose($fh);			
 
@@ -106,9 +107,9 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 					
 					// Escribir el log con la información de sesión creada por Tbk.
 					if (file_exists($logFile)) {
-						  $fh = fopen($logFile, 'w');
+						  $fh = fopen($logFile, 'a');
 						  echo '<script>console.log ("Datos OK.")</script>';
-						  fwrite ($fh,'sessionId='.$request["sessionId"].';buyOrder='.$request["buyOrder"].';amount='.$request["amount"].';email='.$email);
+						  fwrite ($fh,$request['sessionId'].";		".$request['buyOrder'].";		".$request['amount'].";		".$email."\n");
 						}
 					fclose($fh);	
 					
