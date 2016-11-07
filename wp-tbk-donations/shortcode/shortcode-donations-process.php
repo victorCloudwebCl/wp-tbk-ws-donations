@@ -38,6 +38,10 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 				require_once( ABS_DIR . '/certificates/cert-normal.php' );
 				echo '<script>console.log ("cert-normal ok")</script>';
 			}
+			
+			
+
+			
 
 			/* Configuracion parametros de la clase Webpay */
 			//$baseurl = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'];
@@ -88,7 +92,23 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 									<p>Orden de compra: <b>'.$request["buyOrder"].'</b>
 									<p> Email: <b>'.$email.'</b><p>
 									<p> Presiona el botón para realizar el pago, o ve hacia atrás con tu navegador para modificarlos.</p>';
-						$next_page = $result["url"];
+						
+					//Verificar si existe el archivo de logs, si no, crear uno nuevo
+					
+					$logFile = ABS_DIR . '/log/logfile.txt';
+					
+					
+					if (file_exists($logFile)) {
+						  $fh = fopen($logFile, 'a');
+						  echo '<script>console.log ("logfile existe.")</script>';
+						} else {
+						  $fh = fopen($logFile, 'w');
+						  echo '<script>console.log ("logfile creado.")</script>';
+						}
+						fclose($fh);
+						
+					$next_page = $result["url"];
+					
 					} else {
 						$message = "WebPay no disponible. Por favor inténtalo nuevamente o ponte en contacto con nosotros.";
 					}
