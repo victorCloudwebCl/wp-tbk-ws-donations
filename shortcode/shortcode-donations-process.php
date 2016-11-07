@@ -109,7 +109,6 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 					$result = $webpay->initTransaction($request["amount"], $request["sessionId"], $request["buyOrder"]);
 					$webpay_token = $result["token_ws"];
 					
-					
 
 					// Verificamos respuesta de inicio en webpay
 					if (strlen($webpay_token)) {
@@ -202,7 +201,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 								$message = '<p>Pago <b>aceptado y recibido</b> por Webpay. </p> 
 											<p> Si deseas ver el voucher, haz clic en el botón.</p>
 											<p> Número de orden: '.$result->buyOrder;
-								$next_page = '';
+								$next_page = $result->urlRedirection;
 								$next_page_title = "Finalizar Pago";
 								
 								$emailtxt = '
