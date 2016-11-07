@@ -81,10 +81,8 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 
 			$bot_tx = "Continuar";
 			
-			
-			
-			
-			
+
+	
 			/* Según acción, paso */
 			switch ($action) {
 
@@ -98,46 +96,56 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 					//Generar la request que se enviará a Transbank.
 					$request = array(
 							"amount"    => $amount,      // monto a cobrar
-							//"buyOrder"  => round(microtime(true)*1000),    // numero orden de compra
-							"buyOrder" => 99999,
+							"buyOrder"  => round(microtime(true)*1000),    // numero orden de compra
+							//"buyOrder" => 99999,
 							"sessionId" => uniqid(), // idsession local
 						);
-	
-						//Chequeo de duplicidad de OC **************
-						echo '<script>console.log("'.$request["buyOrder"].'")</script>';
-					    if( exec('grep '.escapeshellarg($request["buyOrder"]).' '.$logFile)) {
-					       echo '<script>console.log("'.$request["buyOrder"].' DUPLICADO!")</script>';
-					    }
-
+						
+					
 
 					// Iniciamos Transaccion
 					$result = $webpay->initTransaction($request["amount"], $request["sessionId"], $request["buyOrder"]);
 					$webpay_token = $result["token_ws"];
-
 					
+					
+
 					// Verificamos respuesta de inicio en webpay
 					if (strlen($webpay_token)) {
 						
-       					//RESPUESTA DE INICIO DE SESIÓN OK.
+       					
+       					//Chequeo de duplicidad de OC **************
+						echo '<script>console.log("'.$request["buyOrder"].'")</script>';
+					    
+
+       					// RESPUESTA DE INICIO DE SESIÓN OK.
        					$message = '<p> Monto de la donación: <b>&#36;'.number_format($amount,0,",",".").'</b><p>
 									<p> Orden de compra: <b>'.$request["buyOrder"].'</b>
 									<p> Email: <b>'.$email.'</b><p>
 									<p> Presiona el botón para realizar el pago, o ve hacia atrás con tu navegador para modificarlos.</p>';
 						$opStatus = 'TBK - Inicio de sesión OK.';
-
-								// Escribir el log con la información de sesión creada por Tbk.
-								if (file_exists($logFile)) {
-										  $fh = fopen($logFile, 'a');
-										  echo '<script>console.log ("Datos OK.")</script>';
-										  fwrite ($fh,$request['sessionId'].";		".$request['buyOrder'].";		".$request['amount'].";		".$email.";		".$opStatus.";		");
-										  fclose($fh);	
-								}
-							
-							
+						$resultadoLoginInfo = $request['sessionId'].";		".$request['buyOrder'].";		".$request['amount'].";		".$email.";		".$opStatus.";		".$result['token_ws'].";			 ".$result['url'].";			";
+						
+						$next_page = $result["url"];
+						
+						
+					    if( exec('grep '.escapeshellarg($request["buyOrder"]).' '.$logFile)) {
+					       echo '<script>console.log("'.$request["buyOrder"].' DUPLICADO!")</script>';
+					       $message = "OC DUPLICADA";
+					       $resultadoLoginInfo =  $request['sessionId']."Sesión no iniciada en Transbank - OC Duplicada (# ".$request['buyOrder'].")";
+						} 							
+					
 					} else {
 							//NO HAY RESPUESTA DE TBK.
 							$message = "WebPay no disponible. Por favor inténtalo nuevamente o ponte en contacto con nosotros.";
 					}
+					
+								// Escribir en el log el resultado de inicio sesión.
+								if (file_exists($logFile)) {
+										  $fh = fopen($logFile, 'a');
+										  echo '<script>console.log ("Datos OK.")</script>';
+										  fwrite ($fh,$resultadoLoginInfo);
+										  fclose($fh);	
+								}
 						
 					break;
 
@@ -153,7 +161,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 						       $tx_step = "No se puede realizar.";
 						       $message = "No podemos realizar esta operación, debido a que la orden de compra se encuentra duplicada. Presiona el botón para generar una nueva orden de compra.";
 						       $bot_tx = "Reintentar";
-						       $next_page='';
+						       
 						       
 								// Registrar el evento en el log.
 									if (file_exists($logFile)) {
@@ -242,9 +250,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 			
 }/*fin switch*/
 
-
-		
-			
+	
 		return '
 		<h2>'.$tx_step.'</h2>
 		<p>'.$message.'</p>
