@@ -85,7 +85,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 					// Verificamos respuesta de inicio en webpay
 					if (strlen($webpay_token)) {
 						$message = '<p> Monto de la donación: <b>&#36;'.number_format($amount,0,",",".").'</b><p>
-									<p>Orden de compra'.$request["buyOrder"].'
+									<p>Orden de compra: <b>'.$request["buyOrder"].'</b>
 									<p> Email: <b>'.$email.'</b><p>
 									<p> Presiona el botón para realizar el pago, o ve hacia atrás con tu navegador para modificarlos.</p>';
 						$next_page = $result["url"];
