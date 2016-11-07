@@ -39,7 +39,18 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 				echo '<script>console.log ("cert-normal ok")</script>';
 			}
 			
-			
+			//Verificar si existe el archivo de logs, si no, crear uno nuevo
+					$logFile = ABS_DIR . '/log/logfile.txt';
+					
+					
+					if (file_exists($logFile)) {
+						  $fh = fopen($logFile, 'a');
+						  echo '<script>console.log ("logfile existe.")</script>';
+						} else {
+						  $fh = fopen($logFile, 'w');
+						  echo '<script>console.log ("logfile creado.")</script>';
+						}
+						fclose($fh);			
 
 			
 
@@ -93,19 +104,8 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
 									<p> Email: <b>'.$email.'</b><p>
 									<p> Presiona el botón para realizar el pago, o ve hacia atrás con tu navegador para modificarlos.</p>';
 						
-					//Verificar si existe el archivo de logs, si no, crear uno nuevo
-					
-					$logFile = ABS_DIR . '/log/logfile.txt';
-					
-					
-					if (file_exists($logFile)) {
-						  $fh = fopen($logFile, 'a');
-						  echo '<script>console.log ("logfile existe.")</script>';
-						} else {
-						  $fh = fopen($logFile, 'w');
-						  echo '<script>console.log ("logfile creado.")</script>';
-						}
-						fclose($fh);
+
+						
 						
 					$next_page = $result["url"];
 					
