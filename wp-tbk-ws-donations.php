@@ -19,6 +19,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+
+
 /**
  * Define global constants.
  *
@@ -41,14 +43,10 @@ if ( ! defined('ABS_URL' ) ) {
     define( 'ABS_URL', WP_PLUGIN_URL . '/' . ABS_NAME );
 }
 
-/**
- * Link.
- *
- * @since 1.0.0
- */
-if ( file_exists( ABS_DIR . '/shortcode/shortcode-link.php' ) ) {
-    require_once( ABS_DIR . '/shortcode/shortcode-link.php' );
-}
+/*Hoja de estilos del plugin*/
+$stylesheet_url = plugins_url().'/wp-tbk-ws-donations/css/style.css';
+
+wp_enqueue_style( 'wp-tbk-ws-donations-style', $stylesheet_url, 'all' );
 
 
 /**
