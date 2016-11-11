@@ -9,6 +9,7 @@
  */
 
 if ( ! function_exists( 'tbk_donations_process' ) ) {
+		
 		// Add the action.
     	add_action( 'plugins_loaded', function() {
         // Add the shortcode.
@@ -23,9 +24,10 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
      */
      
 
-    
     function tbk_donations_process() {
-        
-        return '';
-    }
+        include ( dirname( dirname(__FILE__) ).'/forms/tbk-normal.php');
+
+    } //** Funcion tbk_donations_process
 }
+
+?>

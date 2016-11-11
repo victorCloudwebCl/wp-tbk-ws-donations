@@ -5,47 +5,70 @@
  * @copyright  2015 Transbank S.A. (http://www.tranbank.cl)
  * @date       Jan 2015
  * @license    GNU LGPL
- * @version    1.0
+ * @version    2.0.1
  */
 
 require_once(__DIR__ . '/soap/soap-wsse.php');
 require_once(__DIR__ . '/soap/soap-validation.php');
 require_once(__DIR__ . '/soap/soapclient.php');
 
-include('webpay-normal.php');
-include('webpay-config.php');
+include(__DIR__.'/configuration.php');
+include(__DIR__.'/webpay-normal.php');
+include(__DIR__.'/webpay-mall-normal.php');
+include(__DIR__.'/webpay-nullify.php');
+include(__DIR__.'/webpay-capture.php');
+include(__DIR__.'/webpay-oneclick.php');
+include(__DIR__.'/webpay-complete.php');
 
-class WebPaySOAP {
+class Webpay {
 
-    var $config, $webpayNormal;
+    var $configuration, $webpayNormal, $webpayMallNormal, $webpayNullify, $webpayCapture, $webpayOneClick, $webpayCompleteTransaction;
 
-    /**
-     * Constuctor
-     * */
     function __construct($params) {
 
-        $this->config = new WebPayConfig($params);
+        $this->configuration = $params;
     }
 
     public function getNormalTransaction() {
         if ($this->webpayNormal == null) {
-            $this->webpayNormal = new WebPayNormal($this->config);
+            $this->webpayNormal = new WebPayNormal($this->configuration);
         }
         return $this->webpayNormal;
     }
 
-    /**
-     * Envia por método POST el token
-     * */
-    public function redirect($url, $data) {
-        echo "<form action='" . $url . "' method='POST' name='webpayForm'>";
-        foreach ($data as $name => $value) {
-            echo "<input type='hidden' name='" . htmlentities($name) . "' value='" . htmlentities($value) . "'>";
+    public function getMallNormalTransaction() {
+        if ($this->webpayMallNormal == null) {
+            $this->webpayMallNormal = new WebPayMallNormal($this->configuration);
         }
-        echo "</form>"
-        . "<script language='JavaScript'>"
-        . "document.webpayForm.submit();"
-        . "</script>";
+        return $this->webpayMallNormal;
+    }
+
+    public function getNullifyTransaction() {
+        if ($this->webpayNullify == null) {
+            $this->webpayNullify = new WebpayNullify($this->configuration);
+        }
+        return $this->webpayNullify;
+    }
+
+    public function getCaptureTransaction() {
+        if ($this->webpayCapture == null) {
+            $this->webpayCapture = new WebpayCapture($this->configuration);
+        }
+        return $this->webpayCapture;
+    }
+
+    public function getOneClickTransaction() {
+        if ($this->webpayOneClick == null) {
+            $this->webpayOneClick = new WebpayOneClick($this->configuration);
+        }
+        return $this->webpayOneClick;
+    }
+
+    public function getCompleteTransaction() {
+        if ($this->webpayCompleteTransaction == null) {
+            $this->webpayCompleteTransaction = new WebpayCompleteTransaction($this->configuration);
+        }
+        return $this->webpayCompleteTransaction;
     }
 
 }

@@ -5,7 +5,7 @@
  * @copyright  2015 Transbank S.A. (http://www.tranbank.cl)
  * @date       Jan 2015
  * @license    GNU LGPL
- * @version    1.0
+ * @version    2.0.1
  */
 
 /** Contiene datos de integración para realizar pruebas de conectividad */

@@ -4,13 +4,13 @@ require_once('xmlseclibs.php');
 require_once('soap-wsse.php');
 
 class WSSecuritySoapClient extends SoapClient {
-
+    
     private $useSSL = false;
     private $privateKey = "";
     private $publicCert = "";
 
     function __construct($wsdl, $privateKey, $publicCert, $options) {
-
+        
         $locationparts = parse_url($wsdl);
         $this->useSSL = $locationparts['scheme'] == "https" ? true : false;
         $this->privateKey = $privateKey;
@@ -51,8 +51,10 @@ class WSSecuritySoapClient extends SoapClient {
         $objKey = new XMLSecurityKey(XMLSecurityKey::AES256_CBC);
         $objKey->generateSessionKey();
         $retVal = parent::__doRequest($objWSSE->saveXML(), $location, $saction, $version);
+
         $doc = new DOMDocument();
         $doc->loadXML($retVal);
+        
         return $doc->saveXML();
     }
 
