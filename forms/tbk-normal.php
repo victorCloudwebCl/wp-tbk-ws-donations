@@ -32,11 +32,12 @@ $post_array = false;
 switch ($action) {
 
     default:
-
+        
+        
         $tx_step = "Init";
 
         /** Monto de la transacción */
-        $amount = 9990;
+        $amount = isset($_GET["amount"]) ? $_GET["amount"] : '10000';
 
         /** Orden de compra de la tienda */
         $buyOrder = rand();
