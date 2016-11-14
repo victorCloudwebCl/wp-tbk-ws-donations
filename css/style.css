@@ -1,3 +1,18 @@
-input {
-    border:orange solid thin!important;
+.wp-tbk-donations{
+    border: orange thin solid;
+    padding:10px;
+    font-family: sans-serif;
+}
+
+.wp-tbk-donations form{
+    text-align:center;
+}
+
+.wp-tbk-donations input{
+    border-color: #FFDD00;
+}
+
+.wp-tbk-donations input[type=submit] {
+    padding:20px;
+    margin: 20px;
 }

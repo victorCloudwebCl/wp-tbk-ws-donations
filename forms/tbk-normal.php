@@ -1,5 +1,3 @@
-<h1>Ejemplos Webpay - Transaccion Normal</h1>
-
 <?php
 /**
  * @author     Allware Ltda. (http://www.allware.cl)

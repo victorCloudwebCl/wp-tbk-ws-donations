@@ -25,7 +25,10 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
      
 
     function tbk_donations_process() {
+        echo '<link rel="stylesheet" type="text/css" media="screen" href="'.ABS_URL.'/css/style.css">';
+		echo '<div class="wp-tbk-donations">';
         include ( dirname( dirname(__FILE__) ).'/forms/tbk-normal.php');
+        echo '</div>';
 
     } //** Funcion tbk_donations_process
 }

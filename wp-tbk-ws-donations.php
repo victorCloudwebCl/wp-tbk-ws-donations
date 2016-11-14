@@ -44,9 +44,9 @@ if ( ! defined('ABS_URL' ) ) {
 }
 
 /*Hoja de estilos del plugin*/
-$stylesheet_url = plugins_url().'/wp-tbk-ws-donations/css/style.css';
+// $stylesheet_url = ABS_URL.'/css/style.css';
+// wp_enqueue_style( 'wp-tbk-ws-donations-style', $stylesheet_url,'' ,'' ,'all' );
 
-wp_enqueue_style( 'wp-tbk-ws-donations-style', $stylesheet_url, 'all' );
 
 
 /**
