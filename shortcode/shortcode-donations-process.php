@@ -18,10 +18,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
     
 	/**
      * tbk_donations_process shortcode function.
-     *
-     * @return mixed
-     * @since  1.0.0
-     */
+*/
      
 
     function tbk_donations_process() {
