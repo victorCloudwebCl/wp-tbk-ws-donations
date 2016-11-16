@@ -37,8 +37,9 @@ switch ($action) {
         $amount = isset($_GET["amount"]) ? $_GET["amount"] : '10000';
 
         /** Orden de compra de la tienda */
-        // $buyOrder = date("Y-m-d-H-m-s").rand(1000,5000); 
-        $buyOrder = 9999;
+        $buyOrder = date("Y-m-d-H-m-s").rand(1000,5000); 
+        // Generar OC duplicadas.
+        //$buyOrder = 9999;
 
         /** Código comercio de la tienda entregado por Transbank */
         $sessionId = uniqid();
