@@ -31,13 +31,14 @@ switch ($action) {
 
     default:
         
-        $tx_step = "Confirma tu donación";
+        $tx_step = "Revisa tu donación.";
 
         /** Monto de la transacción */
         $amount = isset($_GET["amount"]) ? $_GET["amount"] : '10000';
 
         /** Orden de compra de la tienda */
-        $buyOrder = rand();
+        // $buyOrder = date("Y-m-d-H-m-s").rand(1000,5000); 
+        $buyOrder = 9999;
 
         /** Código comercio de la tienda entregado por Transbank */
         $sessionId = uniqid();
@@ -75,8 +76,7 @@ switch ($action) {
         break;
 
     case "getResult":
-        
-        
+  
         
         if (!isset($_POST["token_ws"]))
             break;
@@ -92,17 +92,42 @@ switch ($action) {
         $result = $webpay->getNormalTransaction()->getTransactionResult($token);
         
         
+        
         /** Verificamos resultado  de transacción */
+        
+        
         if ($result->detailOutput->responseCode === 0) {
-
+            $fileName =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$result->buyOrder.'.txt';
+            
+            
+            if (file_exists($fileName)){
+                echo "
+                    <h3>Error en la transacción</h3>
+                    La transacción no es válida. No se ha cargado dinero de tu cuenta<br>
+                    Número de orden: <b>".$result->buyOrder."</b>
+                    Posibles causas:<br>
+                                Las posibles causas de este rechazo son:<br>
+                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
+                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
+                                - Tarjeta aun no habilitada en el sistema financiero<br>
+                                <br>
+                ";
+                
+                die;
+            }
+            else{
+                $newFile = fopen($fileName,'w');
+                fclose($newFile);   
+            }
+       
             /** propiedad de HTML5 (web storage), que permite almacenar datos en nuestro navegador web */
             echo '<script>window.localStorage.clear();</script>';
             echo '<script>localStorage.setItem("authorizationCode", '.$result->detailOutput->authorizationCode.')</script>';
             echo '<script>localStorage.setItem("amount", '.$result->detailOutput->amount.')</script>';
             echo '<script>localStorage.setItem("buyOrder", '.$result->buyOrder.')</script>';
 
-            $tx_step = "Pago recibido.";
-            $message = "<p>Tu donación ha sido <b>aceptada</b> por Webpay.<br>
+            $tx_step = "Confirmar pago.";
+            $message = "<p>Tu donación ha sido <b>aceptada</b> por Webpay. Presiona el botón para hacerla efectiva.<br>
                         Código de orden <b>".$result->buyOrder."</b><br>
                         Monto de la donación <b>$ ".$result->detailOutput->amount."</b><br>
                         Código de autorización: <b> ".$result->detailOutput->authorizationCode."</b><br>
@@ -112,7 +137,9 @@ switch ($action) {
                         4 últimos dígitos de la tarjeta bancaria: <b>".$result->cardNumber->cardDetail->cardNumber."</b><br>
                         </p>";
             $next_page = $result->urlRedirection;
-            $button_name = "Generar y ver Voucher &raquo;";
+            $button_name = "Confirmar pago &raquo;";
+            
+
             
         } else {
             
