@@ -116,19 +116,20 @@ switch ($action) {
             
         } else {
             
-            
+            $tx_step = "Donación rechazada.";
             $motivo = ($result->detailOutput->responseCode);
             
             switch  (true){
         
                     case stristr ($motivo,'-1'):
-                        $motivo = '<p>fue rechazada por Webpay.<br>
-                                Código de Orden'.$buyOrder.'
+                        $motivo = 'fue rechazada por Transbank.<br>
                                 Posibles causas:<br>
                                 Las posibles causas de este rechazo son:<br>
                                 - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
                                 - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
-                                - Tarjeta aun no habilitada en el sistema financiero';
+                                - Tarjeta aun no habilitada en el sistema financiero<br>
+                                <br>
+                                Código de Orden: <b>'.$buyOrder.'</b><br>';
                         break;
                     case stristr ($motivo,'-2'):
                         $motivo = '<p>La transacción debe reintentarse.</p>';
@@ -157,7 +158,7 @@ switch ($action) {
                         break;
                 };
 
-            $message = "El pago <b>falló</b>, debido a que <b>".$motivo."</b>";
+            $message = "El pago <b>falló</b>, debido a que:".$motivo;
             
             $next_page = '';
         }
@@ -165,6 +166,8 @@ switch ($action) {
         break;
     
     case "end":
+        
+        //Si no está TBK_TOKEN en el POST, la llamada viene desde un éxito.
         
         $post_array = true;
         $tx_step = "Gracias por tu donación";
@@ -174,7 +177,17 @@ switch ($action) {
                     <p></p>";
         $next_page = $sample_baseurl."/procesar-donacion/?action=nullify";
         $button_name = "Anular donación. &raquo;";
-
+        
+        //Si está TBK_TOKEN, la llamada a "end" viene de una anulación.
+        
+        if ( isset($_POST["TBK_TOKEN"]) ){
+        $tx_step = "Donación anulada";
+        $message = "<p>Anulaste tu donación. Puedes volver a intentarlo presionando el botón</p>
+                    <p></p>";
+          $next_page = $sample_baseurl."/donacion-monetaria/";
+        $button_name = "Reintentar donación";
+        }
+        
         break;   
 
     
