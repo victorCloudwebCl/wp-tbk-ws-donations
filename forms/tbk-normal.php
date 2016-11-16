@@ -118,6 +118,7 @@ switch ($action) {
             
             $tx_step = "Donación rechazada.";
             $motivo = ($result->detailOutput->responseCode);
+            $motivoDirecto = utf8_decode($result->detailOutput->responseDescription);
             
             switch  (true){
         
@@ -158,7 +159,7 @@ switch ($action) {
                         break;
                 };
 
-            $message = "El pago <b>falló</b>, debido a que:".$motivo;
+            $message = "El pago <b>falló</b>, debido a que:".$motivo."<br>(".$motivoDirecto.")";
             
             $next_page = '';
         }
@@ -236,12 +237,15 @@ switch ($action) {
         break;
 }
 
+// Error en certificado (y otros)
+// No se puede iniciar sesión en Transbank.
+
 if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page)) {
 
-    $result = "Ocurri&oacute; un error al procesar tu solicitud";
-    echo "<div style = 'background-color:lightgrey;'><h3>result</h3>$result;</div><br/><br/>";
-    echo "<a href='.'>&laquo; Regresar a CNJoven</a>";
-    die;
+    $tx_step = "Webpay no disponible.";
+    $message = "<p>Ha ocurrido un error. Por favor ponte en contacto con nosotros para resolverlo a la brevedad.<br>
+                Puedes utilizar nuestro formulario de contacto, enviarnos un email o llamar a alguno de los teléfonos que aparecen en el pie de página.
+                Número de Orden: <b>'.$buyOrder.'</b></p>";
 }
 
 /* Respuesta de Salida - Vista WEB ********************** */
