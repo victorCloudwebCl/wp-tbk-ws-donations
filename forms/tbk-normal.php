@@ -31,8 +31,7 @@ switch ($action) {
 
     default:
         
-        
-        $tx_step = "Init";
+        $tx_step = "Confirma tu donación";
 
         /** Monto de la transacción */
         $amount = isset($_GET["amount"]) ? $_GET["amount"] : '10000';
@@ -47,7 +46,7 @@ switch ($action) {
         $urlReturn = $sample_baseurl."/procesar-donacion/?action=getResult";
         
         /** URL Final */
-	$urlFinal  = $sample_baseurl."/procesar-donacion/?action=end";
+	    $urlFinal  = $sample_baseurl."/procesar-donacion/?action=end";
 
         $request = array(
             "amount"    => $amount,
@@ -57,26 +56,28 @@ switch ($action) {
             "urlFinal"  => $urlFinal,
         );
 
+
         /** Iniciamos Transaccion */
         $result = $webpay->getNormalTransaction()->initTransaction($amount, $buyOrder, $sessionId, $urlReturn, $urlFinal);
         
         /** Verificamos respuesta de inicio en webpay */
         if (!empty($result->token) && isset($result->token)) {
-            $message = "Sesion iniciada con exito en Webpay";
+            $message = "<div><p>Monto de tu donación: <b>".$amount."</b></p><p>Número de orden:<b>".$buyOrder."</div>";
+            
             $token = $result->token;
             $next_page = $result->url;
         } else {
-            $message = "webpay no disponible";
+            $message = "Webpay no disponible";
         }
-
-        $button_name = "Continuar &raquo;";
+            
+            $button_name = "Continuar &raquo;";
         
         break;
 
     case "getResult":
         
-        $tx_step = "Get Result";
-
+        
+        
         if (!isset($_POST["token_ws"]))
             break;
 
@@ -90,6 +91,7 @@ switch ($action) {
         /** Rescatamos resultado y datos de la transaccion */
         $result = $webpay->getNormalTransaction()->getTransactionResult($token);
         
+        
         /** Verificamos resultado  de transacción */
         if ($result->detailOutput->responseCode === 0) {
 
@@ -99,36 +101,86 @@ switch ($action) {
             echo '<script>localStorage.setItem("amount", '.$result->detailOutput->amount.')</script>';
             echo '<script>localStorage.setItem("buyOrder", '.$result->buyOrder.')</script>';
 
-            $message = "Pago ACEPTADO por webpay (se deben guardatos para mostrar voucher)";
+            $tx_step = "Pago recibido.";
+            $message = "<p>Tu donación ha sido <b>aceptada</b> por Webpay.<br>
+                        Código de orden <b>".$result->buyOrder."</b><br>
+                        Monto de la donación <b>$ ".$result->detailOutput->amount."</b><br>
+                        Código de autorización: <b> ".$result->detailOutput->authorizationCode."</b><br>
+                        Fecha de la operación: <b>".$result->detailOutput->accountingDate."</b><br>
+                        Tipo de pago: <b>".$result->detailOutput->paymentTypeCode."</b><br>
+                        Cantidad de cuotas: <b>".$result->detailOutput->sharesNumber."</b><br>
+                        4 últimos dígitos de la tarjeta bancaria: <b>".$result->cardNumber->cardDetail->cardNumber."</b><br>
+                        </p>";
             $next_page = $result->urlRedirection;
+            $button_name = "Generar y ver Voucher &raquo;";
             
         } else {
-            $message = "Pago RECHAZADO por webpay - " . utf8_decode($result->detailOutput->responseDescription);
+            
+            
+            $motivo = ($result->detailOutput->responseCode);
+            
+            switch  (true){
+        
+                    case stristr ($motivo,'-1'):
+                        $motivo = '<p>fue rechazada por Webpay.<br>
+                                Código de Orden'.$buyOrder.'
+                                Posibles causas:<br>
+                                Las posibles causas de este rechazo son:<br>
+                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
+                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
+                                - Tarjeta aun no habilitada en el sistema financiero';
+                        break;
+                    case stristr ($motivo,'-2'):
+                        $motivo = '<p>La transacción debe reintentarse.</p>';
+                        break;
+                    case stristr ($motivo,'-3'):
+                        $motivo = 'hubo un error en la transacción';
+                        break;
+                    case stristr ($motivo,'-4'):
+                        $motivo = 'La transacción fue rechazada por Webpay.';
+                        break;
+                    case stristr ($motivo,'-5'):
+                        $motivo = 'Rechazo por error de tasa.';  
+                        break;
+                    case stristr ($motivo,'-6'):
+                        $motivo = 'excede el cupo máximo mensual. Por favor reintenta con un monto menor.';
+                        break;
+                    case stristr ($motivo,'-7'):
+                        $motivo = 'excede el límite diario por transacción.';
+                        break;
+                    case stristr ($motivo,'-8'):
+                        $motivo = "el rubro no está autorizado.";
+                        break;
+                                                
+                    default:
+                        $motivo = "pasó demasiado tiempo (Timeout Error), generaste una petición con la misma Orden, o Webpay no se encuentra disponible en este momento.";
+                        break;
+                };
+
+            $message = "El pago <b>falló</b>, debido a que <b>".$motivo."</b>";
+            
             $next_page = '';
         }
-
-        $button_name = "Continuar &raquo;";
 
         break;
     
     case "end":
         
         $post_array = true;
-        
-        $tx_step = "End";
+        $tx_step = "Gracias por tu donación";
         $request = "";
         $result = $_POST;
-        
-        $message = "Transacion Finalizada";
+        $message = "<p>Transacion finalizada. Muchas gracias por tu aporte.</p>
+                    <p></p>";
         $next_page = $sample_baseurl."/procesar-donacion/?action=nullify";
-        $button_name = "Anular Transacci&oacute;n &raquo;";
+        $button_name = "Anular donación. &raquo;";
 
         break;   
 
     
     case "nullify":
 
-        $tx_step = "nullify";
+        $tx_step = "Anulación de donación";
         
         $request = $_POST;
         
@@ -145,7 +197,7 @@ switch ($action) {
         $buyOrder =  filter_input(INPUT_POST, 'buyOrder');
         
         /** Monto que se desea anular de la transacción */
-        $nullifyAmount = 200;
+        $nullifyAmount = $amount;
 
         $request = array(
             "authorizationCode" => $authorizationCode, // Código de autorización
@@ -159,7 +211,9 @@ switch ($action) {
         
         /** Verificamos resultado  de transacción */
         if (!isset($result->authorizationCode)) {
-            $message = "webpay no disponible";
+            $message = "<p>Webpay no disponible. Por favor intente más tarde.</p>
+                        <p>Número de orden a anular: <b>".$buyOrder."</b> (Código de autorización: <b>".$authorizationCode."</b>).</p>
+                        ";
         } else {
             $message = "Transaci&oacute;n Finalizada";
         }
@@ -169,28 +223,20 @@ switch ($action) {
         break;
 }
 
-echo "<h2>Step: " . $tx_step . "</h2>";
-
 if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page)) {
 
     $result = "Ocurri&oacute; un error al procesar tu solicitud";
     echo "<div style = 'background-color:lightgrey;'><h3>result</h3>$result;</div><br/><br/>";
-    echo "<a href='.'>&laquo; volver a index</a>";
+    echo "<a href='.'>&laquo; Regresar a CNJoven</a>";
     die;
 }
 
-/* Respuesta de Salida - Vista WEB */
+/* Respuesta de Salida - Vista WEB ********************** */
 ?>
 
-<div style="background-color:lightyellow;">
-	<h3>request</h3>
-	<?php  var_dump($request); ?>
-</div>
-<div style="background-color:lightgrey;">
-	<h3>result</h3>
-	<?php  var_dump($result); ?>
-</div>
-<p><samp><?php  echo $message; ?></samp></p>
+<h3><?php echo $tx_step; ?></h3>
+<p><?php  echo $message; ?></p>
+
 
 <?php if (strlen($next_page) && $post_array) { ?>
 
@@ -201,8 +247,9 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
             <input type="submit" value="<?php echo $button_name; ?>">
         </form>
 
+
         <script>
-            
+        /*global localStorage*/    
             var authorizationCode = localStorage.getItem('authorizationCode');
             document.getElementById("authorizationCode").value = authorizationCode;
             
@@ -218,11 +265,30 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
         
 <?php } elseif (strlen($next_page)) { ?>
     <form action="<?php echo $next_page; ?>" method="post">
-    
     <input type="hidden" name="token_ws" value="<?php echo ($token); ?>">
     <input type="submit" value="<?php echo $button_name; ?>">
 </form>
 <?php } ?>
+
+<div class="logdatos">
+<h3>Request</h3>
+<pre><?php print_r($request)?></pre>
+<h3>Result</h3>
+<pre><?php  var_dump($result)?></pre>
+<H3>$_GET</H3>
+<pre><?php print_r($_GET)?></pre>
+<H3>$_POST</H3>
+<pre><?php print_r($_POST)?></pre>
+<h3>$_REQUEST</h3>
+<pre><?php print_r($_REQUEST)?></pre>
+<h3>LocalStorage</h3>
+<pre id="lsdump"></pre>
+</div>
+<script>
+    /*global localStorage*/
+    var lsdump = document.getElementById("lsdump");
+    lsdump.innerHTML = JSON.stringify (localStorage);
+</script>
 
 <br>
 <a href=".">&laquo; volver a index</a>
