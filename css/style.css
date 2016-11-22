@@ -21,3 +21,11 @@
     border: orange thin solid;
     padding:20px;
 }
+
+.error{
+    display:inline-block;
+    border: red thin dotted;
+    border-radius:20px;
+    background-color:#ffe5e5;
+    padding:20px;
+}

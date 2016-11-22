@@ -110,9 +110,8 @@ switch ($action) {
                                 Las posibles causas de este rechazo son:<br>
                                 - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
                                 - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
-                                - Tarjeta aun no habilitada en el sistema financiero<br>
-                                <br>
-                ";
+                                - Tarjeta aun no habilitada en el sistema financiero.<br>
+                                <br>";
                 
                 die;
             }
@@ -147,18 +146,13 @@ switch ($action) {
             $tx_step = "Donación rechazada.";
             $motivo = ($result->detailOutput->responseCode);
             $motivoDirecto = utf8_decode($result->detailOutput->responseDescription);
+            $buyOrder = ($result->detailOutput->buyOrder);
+            
             
             switch  (true){
         
                     case stristr ($motivo,'-1'):
-                        $motivo = 'fue rechazada por Transbank.<br>
-                                Posibles causas:<br>
-                                Las posibles causas de este rechazo son:<br>
-                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
-                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
-                                - Tarjeta aun no habilitada en el sistema financiero<br>
-                                <br>
-                                Código de Orden: <b>'.$buyOrder.'</b><br>';
+                        $motivo = '<p>Rechazo de Transbank</p>';
                         break;
                     case stristr ($motivo,'-2'):
                         $motivo = '<p>La transacción debe reintentarse.</p>';
@@ -187,8 +181,18 @@ switch ($action) {
                         break;
                 };
 
-            $message = "El pago <b>falló</b>, debido a que:".$motivo."<br>(".$motivoDirecto.")";
-            
+            $message = "<div class=\"error\">
+                        <h3>Transacción Rechazada n° ".$buyOrder."</h3>
+                                Posibles causas:<br>
+                                Las posibles causas de este rechazo son:<br>
+                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
+                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
+                                - Tarjeta aun no habilitada en el sistema financiero<br>
+                                <br>
+                                Código de Orden: <b>'.$buyOrder.'</b><br>
+                                </div>
+                                <script>console.log('".$motivo."--".$motivoDirecto."');</script>
+                                ";
             $next_page = '';
         }
 

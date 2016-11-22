@@ -15,6 +15,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
         // Add the shortcode.
         add_shortcode( 'tbk_process_donate', 'tbk_donations_process' );
 		});
+		wp_enqueue_style('wp-ws-tbk-donations-styles', ABS_URL."/css/style.css");
     
 	/**
      * tbk_donations_process shortcode function.
@@ -22,7 +23,7 @@ if ( ! function_exists( 'tbk_donations_process' ) ) {
      
 
     function tbk_donations_process() {
-        echo '<link rel="stylesheet" type="text/css" media="screen" href="'.ABS_URL.'/css/style.css">';
+        
 		echo '<div class="wp-tbk-donations">';
         include ( dirname( dirname(__FILE__) ).'/forms/tbk-normal.php');
         echo '</div>';

@@ -13,6 +13,7 @@ if ( ! function_exists( 'tbk_donations_form' ) ) {
     add_action( 'plugins_loaded', function() {
         // Add the shortcode.
         add_shortcode( 'tbk_donate', 'tbk_donations_form' );
+       
     });
 
 
@@ -24,17 +25,16 @@ if ( ! function_exists( 'tbk_donations_form' ) ) {
      * @since  1.0.0
      */
     function tbk_donations_form() {
+    	
 		$email = isset($_GET["email"])? filter_var($_GET["email"], FILTER_SANITIZE_EMAIL): '';
 		$amount = isset($_GET["amount"])? filter_var($_GET["amount"], FILTER_SANITIZE_NUMBER_INT): '';
 
-		$estilo = ABS_DIR."/css/style.css";
-
+		 wp_enqueue_style('wp-ws-tbk-donations-styles', ABS_DIR."/css/style.css");
 	
         // Just return the code.
         
         // **Formulario inicial (para enviar email y monto)
 		return '
-		<link rel="stylesheet" type="text/css" media="screen" href="'.ABS_URL.'/css/style.css">
 		<div class="wp-tbk-donations">
 			<form action="'.$baseurl.'/procesar-donacion/" method="GET">
 			<p>Tu email (opcional):</p>
