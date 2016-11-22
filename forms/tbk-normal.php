@@ -37,7 +37,7 @@ switch ($action) {
         $amount = isset($_GET["amount"]) ? $_GET["amount"] : '10000';
 
         /** Orden de compra de la tienda */
-        $buyOrder = date("Y-m-d-H-m-s").rand(1000,5000); 
+        $buyOrder = date("Ymd-Hms-").rand(1000,5000); 
         // Generar OC duplicadas.
         //$buyOrder = 9999;
 
@@ -126,15 +126,52 @@ switch ($action) {
             echo '<script>localStorage.setItem("amount", '.$result->detailOutput->amount.')</script>';
             echo '<script>localStorage.setItem("buyOrder", '.$result->buyOrder.')</script>';
 
-            $tx_step = "Confirmar pago.";
-            $message = "<p>Tu donación ha sido <b>aceptada</b> por Webpay. Presiona el botón para hacerla efectiva.<br>
-                        Código de orden <b>".$result->buyOrder."</b><br>
+            $tx_step = "Autoriza tu pago.";
+            
+            switch ($result->detailOutput->paymentTypeCode){
+                case ("VD"):
+                    $tipoPagoDisplay = "Débito";
+                    $tipoCuotasDisplay = "Venta débito";
+                    $numeroCuotasDisplay = "00 (sin cuotas)";
+                    break;
+                case ("VN"):
+                    $tipoPagoDisplay = "Crédito";
+                    $tipoCuotasDisplay = "Sin cuotas";
+                    $numeroCuotasDisplay = "00";
+                    break;
+                case ("VC"):
+                    $tipoPagoDisplay = "Crédito";
+                    $tipoCuotasDisplay = "Cuotas normales";
+                    $numeroCuotasDisplay = "00";
+                    break;
+                case ("SI"):
+                    $tipoPagoDisplay = "Crédito";
+                    $tipoCuotasDisplay = "Sin interés";
+                    $numeroCuotasDisplay = "3";
+                    break;
+                case ("S2"):
+                    $tipoPagoDisplay = "Crédito";
+                    $tipoCuotasDisplay = "Sin interés";
+                    $numeroCuotasDisplay = "2";
+                    break;
+                case ("nc"):
+                    $tipoPagoDisplay = "Crédito";
+                    $tipoCuotasDisplay = "Sin interés";
+                    $numeroCuotasDisplay = "--"; // <--- SEGÚN CONTRATO
+                    break;
+                
+            }
+            
+            $message = "<p>Tu donación ha sido <b>autorizada</b> por Webpay.<br>
+                        <b>Presiona el botón para hacerla efectiva.</b><br>
+                        Número de orden de donación: <b>".$result->buyOrder."</b><br>
                         Monto de la donación <b>$ ".$result->detailOutput->amount."</b><br>
                         Código de autorización: <b> ".$result->detailOutput->authorizationCode."</b><br>
                         Fecha de la operación: <b>".$result->detailOutput->accountingDate."</b><br>
-                        Tipo de pago: <b>".$result->detailOutput->paymentTypeCode."</b><br>
+                        Tipo de pago: <b>".$tipoPagoDisplay."</b><br>
+                        Tipo de cuotas: <b>".$tipoCuotasDisplay."</b><br>
                         Cantidad de cuotas: <b>".$result->detailOutput->sharesNumber."</b><br>
-                        4 últimos dígitos de la tarjeta bancaria: <b>".$result->cardNumber->cardDetail->cardNumber."</b><br>
+                        4 últimos dígitos de la tarjeta bancaria: <b>".$result->cardDetail->cardNumber."</b><br>
                         </p>";
             $next_page = $result->urlRedirection;
             $button_name = "Confirmar pago &raquo;";
