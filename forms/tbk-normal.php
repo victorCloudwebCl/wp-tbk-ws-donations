@@ -251,10 +251,20 @@ switch ($action) {
         //Si está TBK_TOKEN, la llamada a "end" viene de una anulación.
         
         if ( isset($_POST["TBK_TOKEN"]) ){
-        $tx_step = "Donación anulada";
-        $message = "<p>Anulaste tu donación. Puedes volver a intentarlo presionando el botón</p>
-                    <p></p>";
-          $next_page = $sample_baseurl."/donacion-monetaria/";
+        $tx_step = "Transacción anulada.";
+        $message = " <h3>Error en la transacción</h3>
+                    La transacción no es válida. No se ha cargado dinero de tu cuenta<br>
+                    Número de orden: <b>".$result->buyOrder."</b>
+                    Posibles causas:<br>
+                                Las posibles causas de este rechazo son:<br>
+                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
+                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
+                                - Tarjeta aun no habilitada en el sistema financiero.<br>
+                                <br>";
+                
+        
+        
+        $next_page = $sample_baseurl."/donacion-monetaria/";
         $button_name = "Reintentar donación";
         }
         
