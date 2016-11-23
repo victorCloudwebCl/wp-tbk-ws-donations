@@ -245,8 +245,8 @@ switch ($action) {
         $result = $_POST;
         $message = "<p>Transacion finalizada. Muchas gracias por tu aporte.</p>
                     <p></p>";
-        $next_page = $sample_baseurl."/procesar-donacion/?action=nullify";
-        $button_name = "Anular donación. &raquo;";
+        $next_page = "";
+        $button_name = "";
         
         
         
@@ -323,7 +323,7 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 
  $tx_step = "Transacción fracasada";
         
-        $message = "Número de orden: <b> ".$request->$buyOrder.". </b><br>
+        $message = "Número de orden: <b> ".$request[buyOrder].". </b><br>
                     <b>No se ha cargado dinero de tu cuenta.</b><br>
                                 Las posibles causas de este rechazo son:<br>
                                 - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
