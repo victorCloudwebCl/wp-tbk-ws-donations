@@ -321,10 +321,15 @@ switch ($action) {
 
 if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page)) {
 
-    $tx_step = "Webpay no disponible.";
-    $message = "<p>Ha ocurrido un error. Por favor ponte en contacto con nosotros para resolverlo a la brevedad.<br>
-                Puedes utilizar nuestro formulario de contacto, enviarnos un email o llamar a alguno de los teléfonos que aparecen en el pie de página.
-                Número de Orden: <b>'.$buyOrder.'</b></p>";
+ $tx_step = "Transacción fracasada";
+        
+        $message = "Número de orden: <b> ".$_POST["TBK_ORDEN_COMPRA"].". </b><br>
+                    <b>No se ha cargado dinero de tu cuenta.</b><br>
+                                Las posibles causas de este rechazo son:<br>
+                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
+                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
+                                - Tarjeta aun no habilitada en el sistema financiero.<br>
+                                <br>";
 }
 
 /* Respuesta de Salida - Vista WEB ********************** */
