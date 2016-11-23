@@ -323,7 +323,7 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 
  $tx_step = "Transacción fracasada";
         
-        $message = "Número de orden: <b> ".$_POST["TBK_ORDEN_COMPRA"].". </b><br>
+        $message = "Número de orden: <b> ".$request->$buyOrder.". </b><br>
                     <b>No se ha cargado dinero de tu cuenta.</b><br>
                                 Las posibles causas de este rechazo son:<br>
                                 - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
