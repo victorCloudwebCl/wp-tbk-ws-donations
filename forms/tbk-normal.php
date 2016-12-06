@@ -136,27 +136,27 @@ switch ($action) {
                     $numeroCuotasDisplay = "00 (sin cuotas)";
                     break;
                 case ("VN"):
-                    $tipoPagoDisplay = "Crédito";
+                    $tipoPagoDisplay = "Crédito, sin cuotas";
                     $tipoCuotasDisplay = "Sin cuotas";
                     $numeroCuotasDisplay = "00";
                     break;
                 case ("VC"):
                     $tipoPagoDisplay = "Crédito";
                     $tipoCuotasDisplay = "Cuotas normales";
-                    $numeroCuotasDisplay = "00";
+                    $numeroCuotasDisplay = $result->detailOutput->sharesNumber;
                     break;
                 case ("SI"):
                     $tipoPagoDisplay = "Crédito";
                     $tipoCuotasDisplay = "Sin interés";
-                    $numeroCuotasDisplay = "3";
+                    $numeroCuotasDisplay = "3 cuotas sin interés";
                     break;
                 case ("S2"):
                     $tipoPagoDisplay = "Crédito";
                     $tipoCuotasDisplay = "Sin interés";
-                    $numeroCuotasDisplay = "2";
+                    $numeroCuotasDisplay = "2 cuotas sin interés";
                     break;
                 case ("nc"):
-                    $tipoPagoDisplay = "Crédito";
+                    $tipoPagoDisplay = "Crédito sin interés";
                     $tipoCuotasDisplay = "Sin interés";
                     $numeroCuotasDisplay = "--"; // <--- SEGÚN CONTRATO
                     break;
