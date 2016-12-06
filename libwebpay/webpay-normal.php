@@ -242,6 +242,7 @@ class WebPayNormal {
             $wsTransactionDetail->buyOrder = $buyOrder;
             $wsTransactionDetail->amount = $amount;
 
+            //Variables del ws 
             $wsInitTransactionInput->transactionDetails = $wsTransactionDetail;
 
             $initTransactionResponse = $this->_initTransaction(
@@ -257,6 +258,16 @@ class WebPayNormal {
             if ($validationResult === TRUE) {
 
                 $wsInitTransactionOutput = $initTransactionResponse->return;
+                
+                $fileName =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$buyOrder.'.txt';
+                $newFile = fopen($fileName,'a');
+                fwrite($newFile,'initTransaction------------------------------');
+                fwrite($sameFile,'REQUEST:');
+                fwrite ($newFile,print_r($wsInitTransactionInput, true));
+                fwrite($sameFile,'RESPONSE');
+                fwrite ($newFile,print_r($wsInitTransactionOutput, true));
+                fclose($newFile);
+                
                 return $wsInitTransactionOutput;
 
             } else {

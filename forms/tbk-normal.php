@@ -71,14 +71,15 @@ switch ($action) {
         } else {
             $message = "Webpay no disponible";
         }
+        
             
-            $button_name = "Continuar &raquo;";
+            $button_name = "Redirigiendo a WebPay &raquo;";
         
         break;
 
     case "getResult":
   
-        
+        //cuando getResult
         if (!isset($_POST["token_ws"]))
             break;
 
@@ -92,19 +93,26 @@ switch ($action) {
         /** Rescatamos resultado y datos de la transaccion */
         $result = $webpay->getNormalTransaction()->getTransactionResult($token);
         
-        
+                $sameFile =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$result->buyOrder.'.txt';
+                
+                $sameFile = fopen($fileName,'a');
+                fwrite($sameFile,'getTransactionResult------------------------------');
+                fwrite($sameFile,'REQUEST:');
+                fwrite ($sameFile,print_r($request, true));
+                fwrite($sameFile,'RESPONSE:');
+                fwrite ($sameFile,print_r($result, true));
+                fclose($sameFile);
         
         /** Verificamos resultado  de transacción */
         
         
         if ($result->detailOutput->responseCode === 0) {
-            $fileName =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$result->buyOrder.'.txt';
             
             
             if (file_exists($fileName)){
                 echo "
-                    <h3>Error en la transacción</h3>
-                    La transacción no es válida. No se ha cargado dinero de tu cuenta<br>
+                    <h3>Transacción rechazada</h3>
+                    <b> No se ha cargado dinero de tu cuenta o tarjeta.</b><br>
                     Número de orden: <b>".$result->buyOrder."</b>
                     Posibles causas:<br>
                                 Las posibles causas de este rechazo son:<br>
@@ -115,17 +123,10 @@ switch ($action) {
                 
                 die;
             }
-            else{
-                $newFile = fopen($fileName,'w');
-                fclose($newFile);   
-            }
+            
        
-            /** propiedad de HTML5 (web storage), que permite almacenar datos en nuestro navegador web */
-            echo '<script>window.localStorage.clear();</script>';
-            echo '<script>localStorage.setItem("authorizationCode", '.$result->detailOutput->authorizationCode.')</script>';
-            echo '<script>localStorage.setItem("amount", '.$result->detailOutput->amount.')</script>';
-            echo '<script>localStorage.setItem("buyOrder", '.$result->buyOrder.')</script>';
-
+           
+            
             $tx_step = "Autoriza tu pago.";
             
             switch ($result->detailOutput->paymentTypeCode){
@@ -161,22 +162,56 @@ switch ($action) {
                     break;
                 
             }
+           
+            /** propiedad de HTML5 (web storage), que permite almacenar datos en nuestro navegador web */
             
+            echo '<script>
+                localStorage.setItem("authorizationCode", "'.$result->detailOutput->authorizationCode.'");
+                localStorage.setItem("amount", "'.$result->detailOutput->amount.'");
+                localStorage.setItem("buyOrder", "'.$result->buyOrder.'");
+                localStorage.setItem("accountingDate", "'.$result->accountingDate.'");
+                localStorage.setItem("transactionDate", "'.$result->transactionDate.'");
+                localStorage.setItem("sessionId", "'.$result->sessionId.'");
+                localStorage.setItem("cardNumber", "'.$result->cardDetail->cardNumber.'");
+                localStorage.setItem("cardExpirationDate", "'.$result->cardDetail->cardExpirationDate.'");
+                localStorage.setItem("tipoPagoDisplay", "'.$tipoPagoDisplay.'");
+                localStorage.setItem("tipoCuotasDisplay", "'.$tipoCuotasDisplay.'");
+                localStorage.setItem("numeroCuotasDisplay", "'.$numeroCuotasDisplay.'");
+                </script>';
+           
+           
+           $message = '<div id="transicion"></div>
+                        <style>
+                            #transicion {
+                                position:fixed;
+                                top:0;
+                                left:0;
+                                width:100%;
+                                height:100%;
+                                z-index:100;
+                                background-image:url("https://webpay3g.transbank.cl/webpayserver/imagenes/background.gif");
+                        }
+                    </style>';
+            
+           /*
+           
             $message = "<p>Tu donación ha sido <b>autorizada</b> por Webpay.<br>
                         <b>Presiona el botón para hacerla efectiva.</b><br>
                         Número de orden de donación: <b>".$result->buyOrder."</b><br>
                         Monto de la donación <b>$ ".$result->detailOutput->amount."</b><br>
                         Código de autorización: <b> ".$result->detailOutput->authorizationCode."</b><br>
-                        Fecha de la operación: <b>".$result->detailOutput->accountingDate."</b><br>
+                        Fecha de la operación: <b>".$result->transactionDate."</b><br>
                         Tipo de pago: <b>".$tipoPagoDisplay."</b><br>
                         Tipo de cuotas: <b>".$tipoCuotasDisplay."</b><br>
                         Cantidad de cuotas: <b>".$result->detailOutput->sharesNumber."</b><br>
                         4 últimos dígitos de la tarjeta bancaria: <b>".$result->cardDetail->cardNumber."</b><br>
                         </p>";
-            $next_page = $result->urlRedirection;
-            $button_name = "Confirmar pago &raquo;";
+            */
             
-
+                        
+            $next_page = $result->urlRedirection;
+            $button_name = "Ver voucher &raquo;";
+            
             
         } else {
             
@@ -243,18 +278,61 @@ switch ($action) {
         $tx_step = "Gracias por tu donación";
         $request = "";
         $result = $_POST;
-        $message = "<p>Transacion finalizada. Muchas gracias por tu aporte.</p>
-                    <p></p>";
+        $message = '<p>Transacion finalizada. Muchas gracias por tu aporte.<br>
+                    <p>Número de Orden:<b id="buyOrder"></b><br>
+                    Monto de la donación: $ <b id="amount"></b><br>
+                    Código de autorización: <b id="authorizationCode"></b><br>
+                    Fecha de transacción: <b id="transactionDate"></b><br>
+                    Tipo de pago: <b id="tipoPagoDisplay"></b><br>
+                    Cuotas:<b id="numeroCuotasDisplay"></b><br>
+                    Últimos 4 dígitos de la tarjeta utilizada:<b id="cardNumber"></b><br>
+
+                    <script>
+                    buyOrder = document.getElementById("buyOrder");
+                    buyOrder.innerHTML = localStorage.getItem("buyOrder");
+                    
+                    amount = document.getElementById("amount");
+                    amount.innerHTML = localStorage.getItem("amount");
+                    
+                    authorizationCode = document.getElementById("authorizationCode");
+                    authorizationCode.innerHTML = localStorage.getItem("authorizationCode");
+                    
+                    transactionDate = document.getElementById("transactionDate");
+                    transactionDate.innerHTML = localStorage.getItem("transactionDate");
+                    
+                    tipoPagoDisplay = document.getElementById("tipoPagoDisplay");
+                    tipoPagoDisplay.innerHTML = localStorage.getItem("tipoPagoDisplay");
+                    
+                     
+                    numeroCuotasDisplay = document.getElementById("numeroCuotasDisplay");
+                    numeroCuotasDisplay.innerHTML = localStorage.getItem("numeroCuotasDisplay");
+                    
+                    cardNumber = document.getElementById("cardNumber");
+                    cardNumber.innerHTML = localStorage.getItem("cardNumber");
+
+
+                    
+                    </script>
+                    ';
+        
+        
         $next_page = "";
         $button_name = "";
         
-        
+                $sameFile =  dirname( dirname(__FILE__) ).'/log/ocinit/acknowledgeTransaction.txt';
+                $sameFile = fopen($sameFile,'a');
+                fwrite($sameFile, 'acknowledgeTransaction------------------------------');
+                fwrite($sameFile,'REQUEST:');
+                fwrite ($sameFile,print_r($_REQUEST, true));
+                fwrite($sameFile,'RESPONSE:');
+                fwrite ($sameFile,print_r($result, true));
+                fclose($sameFile);
         
         //Si está TBK_TOKEN, la llamada a "end" viene de una ANULACIÓN.
         //TBK devuelve el número de orden en la llamada POST, junto con el token y ID de sesión.
         
         if ( isset($_POST["TBK_TOKEN"]) ){
-        $tx_step = "Transacción fracasada";
+        $tx_step = "Transacción rechazada";
         
         $message = "Número de orden: <b> ".$_POST["TBK_ORDEN_COMPRA"].". </b><br>
                     <b>No se ha cargado dinero de tu cuenta.</b><br>
@@ -316,12 +394,16 @@ switch ($action) {
         break;
 }
 
+
+
+
+
 // Error en certificado (y otros)
 // No se puede iniciar sesión en Transbank.
 
 if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page)) {
 
- $tx_step = "Transacción fracasada";
+ $tx_step = "Transacción rechazada";
         
         $message = "Número de orden: <b> ".$request[buyOrder].". </b><br>
                     <b>No se ha cargado dinero de tu cuenta.</b><br>
@@ -332,6 +414,14 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
                                 <br>";
 }
 
+
+
+
+
+
+
+
+
 /* Respuesta de Salida - Vista WEB ********************** */
 ?>
 
@@ -341,35 +431,55 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 
 <?php if (strlen($next_page) && $post_array) { ?>
 
-        <form action="<?php echo $next_page; ?>" method="post">
+        <form action="<?php echo $next_page; ?>" method="post" id="donationsForm" >
             <input type="hidden" name="authorizationCode" id="authorizationCode" value="">
             <input type="hidden" name="amount" id="amount" value="">
             <input type="hidden" name="buyOrder" id="buyOrder" value="">
             <input type="submit" value="<?php echo $button_name; ?>">
         </form>
-
-
+        
         <script>
+            //pagina de transicion
+            document.getElementById("donationsForm").submit();
+        </script>
+
+
+ <script>
+ 
         /*global localStorage*/    
             var authorizationCode = localStorage.getItem('authorizationCode');
             document.getElementById("authorizationCode").value = authorizationCode;
             
+            
             var amount = localStorage.getItem('amount');
             document.getElementById("amount").value = amount;
+            
             
             var buyOrder = localStorage.getItem('buyOrder');
             document.getElementById("buyOrder").value = buyOrder;
             
-            localStorage.clear();
-            
-        </script>
+</script>
+       
         
-<?php } elseif (strlen($next_page)) { ?>
-    <form action="<?php echo $next_page; ?>" method="post">
+<?php } elseif (strlen($next_page)) {
+//Init Transaction form
+?>
+    
+    <form action="<?php echo $next_page; ?>" method="post" id="donationsForm">
     <input type="hidden" name="token_ws" value="<?php echo ($token); ?>">
     <input type="submit" value="<?php echo $button_name; ?>">
 </form>
+
+<script>
+    
+    //sesion iniciada en tbk
+    document.getElementById("donationsForm").submit();
+    
+</script>
 <?php } ?>
+
+
+
 
 <div class="logdatos">
 <h3>Request</h3>
@@ -384,7 +494,9 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 <pre><?php print_r($_REQUEST)?></pre>
 <h3>LocalStorage</h3>
 <pre id="lsdump"></pre>
+<h3>otros</h3>
 </div>
+
 <script>
     /*global localStorage*/
     var lsdump = document.getElementById("lsdump");
@@ -393,3 +505,4 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 
 <br>
 <a href=".">&laquo; volver a index</a>
+
