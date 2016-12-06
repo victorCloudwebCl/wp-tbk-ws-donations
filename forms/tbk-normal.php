@@ -40,6 +40,31 @@ switch ($action) {
         $buyOrder = date("Ymd-Hms-").rand(1000,5000); 
         // Generar OC duplicadas.
         //$buyOrder = 9999;
+        
+        //Control de OC duplicadas.
+        $checkFile =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$buyOrder.'.txt';
+        
+        if (file_exists($checkFile)){
+                echo "
+                    <div class=\"error\">
+                    <h3>Transacción rechazada</h3>
+                    <b> No se ha cargado dinero de tu cuenta o tarjeta.</b><br>
+                    Número de orden: <b>".$buyOrder."</b>
+                    Posibles causas:<br>
+                                Las posibles causas de este rechazo son:<br>
+                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
+                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
+                                - Tarjeta aun no habilitada en el sistema financiero.<br>
+                                <br>
+                    </div>
+                                ";
+                                
+                die;
+            }
+            
+       
+        
+        
 
         /** Código comercio de la tienda entregado por Transbank */
         $sessionId = uniqid();
@@ -57,6 +82,8 @@ switch ($action) {
             "urlReturn" => $urlReturn,
             "urlFinal"  => $urlFinal,
         );
+        
+        
 
 
         /** Iniciamos Transaccion */
@@ -95,6 +122,26 @@ switch ($action) {
         
                 $sameFile =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$result->buyOrder.'.txt';
                 
+        if (file_exists($sameFile)){
+                echo "
+                    <div class=\"error\">
+                    <h3>Transacción rechazada</h3>
+                    <b> No se ha cargado dinero de tu cuenta o tarjeta.</b><br>
+                    Número de orden: <b>".$buyOrder."</b>
+                    Posibles causas:<br>
+                                Las posibles causas de este rechazo son:<br>
+                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
+                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
+                                - Tarjeta aun no habilitada en el sistema financiero.<br>
+                                <br>
+                    </div>
+                                ";
+                                
+                die;
+        }
+                
+                //El archivo de log se genera por primera vez sólo cuando hay un getResult.
+                
                 $sameFile = fopen($sameFile,'a');
                 fwrite($sameFile,'getTransactionResult------------------------------');
                 fwrite($sameFile,'REQUEST:');
@@ -109,20 +156,6 @@ switch ($action) {
         if ($result->detailOutput->responseCode === 0) {
             
             
-            if (file_exists($fileName)){
-                echo "
-                    <h3>Transacción rechazada</h3>
-                    <b> No se ha cargado dinero de tu cuenta o tarjeta.</b><br>
-                    Número de orden: <b>".$result->buyOrder."</b>
-                    Posibles causas:<br>
-                                Las posibles causas de este rechazo son:<br>
-                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
-                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
-                                - Tarjeta aun no habilitada en el sistema financiero.<br>
-                                <br>";
-                
-                die;
-            }
             
        
            
