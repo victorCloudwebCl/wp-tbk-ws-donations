@@ -192,6 +192,9 @@ switch ($action) {
            
            echo  '<div id="transicion"></div>
                         <style>
+                            body{
+                                position:relative;
+                            }
                             #transicion {
                                 position:fixed;
                                 top:0;
