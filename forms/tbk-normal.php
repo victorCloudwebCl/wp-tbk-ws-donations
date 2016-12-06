@@ -198,7 +198,7 @@ switch ($action) {
                                 left:0;
                                 width:100%;
                                 height:100%;
-                                z-index:100;
+                                z-index:999999999999!important;
                                 background-image:url("https://webpay3g.transbank.cl/webpayserver/imagenes/background.gif");
                         }
                     </style>';
