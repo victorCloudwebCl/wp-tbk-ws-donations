@@ -190,7 +190,7 @@ switch ($action) {
                 </script>';
            
            
-           $message = '<div id="transicion"></div>
+           echo  '<div id="transicion"></div>
                         <style>
                             #transicion {
                                 position:fixed;
