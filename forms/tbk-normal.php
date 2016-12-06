@@ -47,7 +47,7 @@ switch ($action) {
         if (file_exists($checkFile)){
                 echo "
                     <div class=\"error\">
-                    <h3>Transacción rechazada</h3>
+                    <h3>Transacción rechazada.</h3>
                     <b> No se ha cargado dinero de tu cuenta o tarjeta.</b><br>
                     Número de orden: <b>".$buyOrder."</b>
                     Posibles causas:<br>
@@ -120,29 +120,11 @@ switch ($action) {
         /** Rescatamos resultado y datos de la transaccion */
         $result = $webpay->getNormalTransaction()->getTransactionResult($token);
         
-                $sameFile =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$result->buyOrder.'.txt';
-                
-        if (file_exists($sameFile)){
-                echo "
-                    <div class=\"error\">
-                    <h3>Transacción rechazada</h3>
-                    <b> No se ha cargado dinero de tu cuenta o tarjeta.</b><br>
-                    Número de orden: <b>".$buyOrder."</b>
-                    Posibles causas:<br>
-                                Las posibles causas de este rechazo son:<br>
-                                - Error en el ingreso de los datos de su tarjeta de Crédito o Débito (fecha y/o código de seguridad).<br>
-                                - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
-                                - Tarjeta aun no habilitada en el sistema financiero.<br>
-                                <br>
-                    </div>
-                                ";
-                                
-                die;
-        }
                 
                 //El archivo de log se genera por primera vez sólo cuando hay un getResult.
+                $createFileName =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$result->buyOrder.'.txt';
                 
-                $sameFile = fopen($sameFile,'a');
+                $sameFile = fopen($createFileName,'a');
                 fwrite($sameFile,'getTransactionResult------------------------------');
                 fwrite($sameFile,'REQUEST:');
                 fwrite ($sameFile,print_r($request, true));
@@ -154,12 +136,7 @@ switch ($action) {
         
         
         if ($result->detailOutput->responseCode === 0) {
-            
-            
-            
-       
-           
-            
+
             $tx_step = "Autoriza tu pago.";
             
             switch ($result->detailOutput->paymentTypeCode){
@@ -473,10 +450,11 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
         
         <script>
             //pagina de transicion
+            /*
             setTimeout(function () {
                     document.getElementById("donationsForm").submit();
             }, 5000); //will call the function after 2 secs.
-
+            */
             
         </script>
 
@@ -509,7 +487,7 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 
 <script>
     
-    //sesion iniciada en tbk
+            
             setTimeout(function () {
                     document.getElementById("donationsForm").submit();
             }, 5000); //will call the function after 2 secs.
