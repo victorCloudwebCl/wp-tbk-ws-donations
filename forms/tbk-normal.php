@@ -453,11 +453,11 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
         
         <script>
             //pagina de transicion
-            /*
-            setTimeout(function () {
+            
+            
                     document.getElementById("donationsForm").submit();
-            }, 5000); //will call the function after 2 secs.
-            */
+            
+            
             
         </script>
 
@@ -490,10 +490,8 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 
 <script>
     
-            
-            setTimeout(function () {
                     document.getElementById("donationsForm").submit();
-            }, 5000); //will call the function after 2 secs.
+            
 
     
 </script>
