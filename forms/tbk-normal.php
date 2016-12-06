@@ -31,7 +31,7 @@ switch ($action) {
 
     default:
         
-        $tx_step = "Revisa tu donación.";
+        $tx_step = "Te estamos redirigiendo a Webpay...";
 
         /** Monto de la transacción */
         $amount = isset($_GET["amount"]) ? $_GET["amount"] : '10000';
@@ -95,7 +95,7 @@ switch ($action) {
         
                 $sameFile =  dirname( dirname(__FILE__) ).'/log/ocinit/'.$result->buyOrder.'.txt';
                 
-                $sameFile = fopen($fileName,'a');
+                $sameFile = fopen($sameFile,'a');
                 fwrite($sameFile,'getTransactionResult------------------------------');
                 fwrite($sameFile,'REQUEST:');
                 fwrite ($sameFile,print_r($request, true));
@@ -440,7 +440,11 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
         
         <script>
             //pagina de transicion
-            document.getElementById("donationsForm").submit();
+            setTimeout(function () {
+                    document.getElementById("donationsForm").submit();
+            }, 5000); //will call the function after 2 secs.
+
+            
         </script>
 
 
@@ -473,7 +477,10 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 <script>
     
     //sesion iniciada en tbk
-    document.getElementById("donationsForm").submit();
+            setTimeout(function () {
+                    document.getElementById("donationsForm").submit();
+            }, 5000); //will call the function after 2 secs.
+
     
 </script>
 <?php } ?>
