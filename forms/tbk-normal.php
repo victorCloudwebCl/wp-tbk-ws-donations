@@ -184,11 +184,7 @@ switch ($action) {
             // HTML de la página de transición (cuadro blanco, envío de form auto.)
             $message = '<div id="transicion" style="position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("https://webpay3g.transbank.cl/webpayserver/imagenes/background.gif";z-index:100!important"></div>
                         <style>   body{position:relative;}</style>
-                <script>
-                    document.body.appendChild(document.getElementById("transicion"))
-                    document.getElementById("donationsForm").submit();
-                    ;
-                </script>';
+                ';
 
             $next_page = $result->urlRedirection;
             $button_name = "Ver voucher &raquo;";
@@ -405,6 +401,11 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
             <input type="hidden" name="buyOrder" id="buyOrder" value="">
             <input type="submit" value="<?php echo $button_name; ?>">
         </form>
+
+        <script>
+                document.body.appendChild(document.getElementById("transicion"))
+                document.getElementById("donationsForm").submit();;
+         </script>
         
  <script>
  
