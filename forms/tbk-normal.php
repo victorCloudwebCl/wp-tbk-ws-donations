@@ -31,7 +31,7 @@ switch ($action) {
 
     default:
         
-        $tx_step = "Te estamos redirigiendo a Webpay...";
+        $tx_step = "Ir al formulario de pago";
 
         /** Monto de la transacción */
         $amount = isset($_GET["amount"]) ? $_GET["amount"] : '10000';
@@ -57,15 +57,11 @@ switch ($action) {
                                 - Tarjeta aun no habilitada en el sistema financiero.<br>
                                 <br>
                     </div>
-                                ";
-                                
+                                ";                                
                 die;
             }
             
        
-        
-        
-
         /** Código comercio de la tienda entregado por Transbank */
         $sessionId = uniqid();
         
@@ -83,9 +79,6 @@ switch ($action) {
             "urlFinal"  => $urlFinal,
         );
         
-        
-
-
         /** Iniciamos Transaccion */
         $result = $webpay->getNormalTransaction()->initTransaction($amount, $buyOrder, $sessionId, $urlReturn, $urlFinal);
         
@@ -97,10 +90,8 @@ switch ($action) {
             $next_page = $result->url;
         } else {
             $message = "Webpay no disponible";
-        }
-        
-            
-            $button_name = "Redirigiendo a WebPay &raquo;";
+        } 
+            $button_name = "Pagar";
         
         break;
 
@@ -189,39 +180,16 @@ switch ($action) {
                 localStorage.setItem("numeroCuotasDisplay", "'.$numeroCuotasDisplay.'");
                 </script>';
            
-           
-           echo  '<div id="transicion"></div>
-                        <style>
-                            body{
-                                position:relative;
-                            }
-                            #transicion {
-                                position:fixed;
-                                top:0;
-                                left:0;
-                                width:100%;
-                                height:100%;
-                                z-index:999999999999!important;
-                                background-image:url("https://webpay3g.transbank.cl/webpayserver/imagenes/background.gif");
-                        }
-                    </style>';
             
-           /*
-           
-            $message = "<p>Tu donación ha sido <b>autorizada</b> por Webpay.<br>
-                        <b>Presiona el botón para hacerla efectiva.</b><br>
-                        Número de orden de donación: <b>".$result->buyOrder."</b><br>
-                        Monto de la donación <b>$ ".$result->detailOutput->amount."</b><br>
-                        Código de autorización: <b> ".$result->detailOutput->authorizationCode."</b><br>
-                        Fecha de la operación: <b>".$result->transactionDate."</b><br>
-                        Tipo de pago: <b>".$tipoPagoDisplay."</b><br>
-                        Tipo de cuotas: <b>".$tipoCuotasDisplay."</b><br>
-                        Cantidad de cuotas: <b>".$result->detailOutput->sharesNumber."</b><br>
-                        4 últimos dígitos de la tarjeta bancaria: <b>".$result->cardDetail->cardNumber."</b><br>
-                        </p>";
-            */
-            
-                        
+            // HTML de la página de transición (cuadro blanco, envío de form auto.)
+            $message = '<div id="transicion" style="position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("https://webpay3g.transbank.cl/webpayserver/imagenes/background.gif";z-index:100!important"></div>
+                        <style>   body{position:relative;}</style>
+                <script>
+                    document.body.appendChild(document.getElementById("transicion"))
+                    document.getElementById("donationsForm").submit();
+                    ;
+                </script>';
+
             $next_page = $result->urlRedirection;
             $button_name = "Ver voucher &raquo;";
             
@@ -323,8 +291,6 @@ switch ($action) {
                     cardNumber = document.getElementById("cardNumber");
                     cardNumber.innerHTML = localStorage.getItem("cardNumber");
 
-
-                    
                     </script>
                     ';
         
@@ -408,9 +374,6 @@ switch ($action) {
 }
 
 
-
-
-
 // Error en certificado (y otros)
 // No se puede iniciar sesión en Transbank.
 
@@ -428,19 +391,11 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 }
 
 
-
-
-
-
-
-
-
 /* Respuesta de Salida - Vista WEB ********************** */
 ?>
 
 <h3><?php echo $tx_step; ?></h3>
 <p><?php  echo $message; ?></p>
-
 
 <?php if (strlen($next_page) && $post_array) { ?>
 
@@ -451,27 +406,14 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
             <input type="submit" value="<?php echo $button_name; ?>">
         </form>
         
-        <script>
-            //pagina de transicion
-            
-            
-                    document.getElementById("donationsForm").submit();
-            
-            
-            
-        </script>
-
-
  <script>
  
         /*global localStorage*/    
             var authorizationCode = localStorage.getItem('authorizationCode');
             document.getElementById("authorizationCode").value = authorizationCode;
-            
-            
+                      
             var amount = localStorage.getItem('amount');
             document.getElementById("amount").value = amount;
-            
             
             var buyOrder = localStorage.getItem('buyOrder');
             document.getElementById("buyOrder").value = buyOrder;
@@ -480,25 +422,17 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
        
         
 <?php } elseif (strlen($next_page)) {
-//Init Transaction form
+
+
+//Init Transaction form -------------
 ?>
     
     <form action="<?php echo $next_page; ?>" method="post" id="donationsForm">
     <input type="hidden" name="token_ws" value="<?php echo ($token); ?>">
     <input type="submit" value="<?php echo $button_name; ?>">
-</form>
+    </form>
 
-<script>
-    
-                    document.getElementById("donationsForm").submit();
-            
-
-    
-</script>
 <?php } ?>
-
-
-
 
 <div class="logdatos">
 <h3>Request</h3>
