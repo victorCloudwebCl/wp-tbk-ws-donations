@@ -56,8 +56,7 @@ switch ($action) {
                                 - Su tarjeta de Crédito o Débito no cuenta con saldo suficiente.<br>
                                 - Tarjeta aun no habilitada en el sistema financiero.<br>
                                 <br>
-                    </div>
-                                ";                                
+                    </div>";                                
                 die;
             }
             
@@ -404,9 +403,7 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
         <script>
                 document.body.appendChild(document.getElementById("transicion"))
                 document.getElementById("donationsForm").submit();;
-         </script>
-        
- <script>
+>
  
         /*global localStorage*/    
             var authorizationCode = localStorage.getItem('authorizationCode');
