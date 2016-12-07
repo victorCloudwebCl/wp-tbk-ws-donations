@@ -182,9 +182,9 @@ switch ($action) {
            
             
             // HTML de la página de transición (cuadro blanco, envío de form auto.)
-            $message = '<div id="transicion" style="position:fixed;top:0;left:0;width:100%;height:100%; background-image:url("https:&#47;&#47;webpay3g.transbank.cl&#47;webpayserver&#47;imagenes&#47;background.gif";z-index:100!important"></div>
-                        <style>   body{position:relative;}</style>
-                ';
+            echo = '<div id="transicion" style="position:fixed;top:0;left:0;width:100%;height:100%; background-image:url("https:&#47;&#47;webpay3g.transbank.cl&#47;webpayserver&#47;imagenes&#47;background.gif";z-index:100!important"></div>
+                        ';
+            $message="";
 
             $next_page = $result->urlRedirection;
             $button_name = "Ver voucher &raquo;";
