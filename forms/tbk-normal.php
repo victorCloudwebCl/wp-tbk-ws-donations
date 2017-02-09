@@ -68,7 +68,7 @@ switch ($action) {
         $urlReturn = $sample_baseurl."/procesar-donacion/?action=getResult";
         
         /** URL Final */
-	    $urlFinal  = $sample_baseurl."/procesar-donacion/?action=end";
+        $urlFinal  = $sample_baseurl."/procesar-donacion/?action=end";
 
         $request = array(
             "amount"    => $amount,
@@ -96,9 +96,9 @@ switch ($action) {
 
     case "getResult":
   
-        //cuando getResult
+        //cuando getResult sin token...
         if (!isset($_POST["token_ws"]))
-            break;
+        break;
 
         /** Token de la transacción */
         $token = filter_input(INPUT_POST, 'token_ws');
@@ -162,6 +162,18 @@ switch ($action) {
                     break;
                 
             }
+
+            // HTML de la página de transición (cuadro blanco, envío de form auto.)
+            echo  "<div id='transicion' style='position:fixed;top:0;left:0;width:100%;height:100%; background-image:url(https://webpay3g.transbank.cl/webpayserver/imagenes/background.gif);z-index:100!important'></div>
+                <style>#header, .main-title, .breadcrumb, #scroll-top-link, footer, #footer {display:none!important};</style>
+                <script>document.body.appendChild(document.getElementById('transicion'));
+                        setTimeout(function(){
+                            // document.getElementById('toBankForm').submit();
+                            document.getElementById('toWebPayForm').submit();
+                }, 2000);
+
+    
+                </script>";
            
             /** propiedad de HTML5 (web storage), que permite almacenar datos en nuestro navegador web */
             
@@ -179,9 +191,8 @@ switch ($action) {
                 localStorage.setItem("numeroCuotasDisplay", "'.$numeroCuotasDisplay.'");
                 </script>';
            
-            
-            // HTML de la página de transición (cuadro blanco, envío de form auto.)
-            echo  '<div id="transicion" style="position:fixed;top:0;left:0;width:100%;height:100%; background-image:url("https:&#47;&#47;webpay3g.transbank.cl&#47;webpayserver&#47;imagenes&#47;background.gif";z-index:100!important"></div> ';
+
+
             $message="";
 
             $next_page = $result->urlRedirection;
@@ -388,23 +399,25 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
 /* Respuesta de Salida - Vista WEB ********************** */
 ?>
 
+
+
 <h3><?php echo $tx_step; ?></h3>
 <p><?php  echo $message; ?></p>
 
 <?php if (strlen($next_page) && $post_array) { ?>
 
-        <form action="<?php echo $next_page; ?>" method="post" id="donationsForm" >
+        <form action="<?php echo $next_page; ?>" method="post" id="toBankForm" >
             <input type="hidden" name="authorizationCode" id="authorizationCode" value="">
             <input type="hidden" name="amount" id="amount" value="">
             <input type="hidden" name="buyOrder" id="buyOrder" value="">
             <input type="submit" value="<?php echo $button_name; ?>">
         </form>
 
+        <style>#header, .main-title, .breadcrumb, #scroll-top-link, footer, #footer {display:none!important};</style>
+
         <script>
-                document.body.appendChild(document.getElementById("transicion"))
-                document.getElementById("donationsForm").submit();;
->
- 
+                
+                
         /*global localStorage*/    
             var authorizationCode = localStorage.getItem('authorizationCode');
             document.getElementById("authorizationCode").value = authorizationCode;
@@ -416,22 +429,20 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
             document.getElementById("buyOrder").value = buyOrder;
             
 </script>
+
        
-        
 <?php } elseif (strlen($next_page)) {
 
-
-//Init Transaction form -------------
 ?>
     
-    <form action="<?php echo $next_page; ?>" method="post" id="donationsForm">
+    <form action="<?php echo $next_page; ?>" method="post" id="toWebPayForm">
     <input type="hidden" name="token_ws" value="<?php echo ($token); ?>">
     <input type="submit" value="<?php echo $button_name; ?>">
     </form>
 
 <?php } ?>
 
-<div class="logdatos">
+<div class="logdatos" style="display:none">
 <h3>Request</h3>
 <pre><?php print_r($request)?></pre>
 <h3>Result</h3>
@@ -451,8 +462,9 @@ if (!isset($request) || !isset($result) || !isset($message) || !isset($next_page
     /*global localStorage*/
     var lsdump = document.getElementById("lsdump");
     lsdump.innerHTML = JSON.stringify (localStorage);
-</script>
+    
 
+</script>
 <br>
-<a href=".">&laquo; volver a index</a>
+<a href=".">&laquo; Volver</a>
 
